@@ -45,19 +45,20 @@ midnight.**
 
 ``` r
 flights = mutate(flights, new_dep_time = (dep_time %/% 100)*60 + (dep_time %% 100))
-flightTimes <- select(flights, dep_time, sched_dep_time, new_dep_time)
+flights = mutate(flights, new_sched_dep_time = (sched_dep_time %/% 100)*60 + (sched_dep_time %% 100))
+flightTimes <- select(flights, dep_time, sched_dep_time, new_dep_time, new_sched_dep_time)
 head(flightTimes)
 ```
 
-    ## # A tibble: 6 x 3
-    ##   dep_time sched_dep_time new_dep_time
-    ##      <int>          <int>        <dbl>
-    ## 1      517            515          317
-    ## 2      533            529          333
-    ## 3      542            540          342
-    ## 4      544            545          344
-    ## 5      554            600          354
-    ## 6      554            558          354
+    ## # A tibble: 6 x 4
+    ##   dep_time sched_dep_time new_dep_time new_sched_dep_time
+    ##      <int>          <int>        <dbl>              <dbl>
+    ## 1      517            515          317                315
+    ## 2      533            529          333                329
+    ## 3      542            540          342                340
+    ## 4      544            545          344                345
+    ## 5      554            600          354                360
+    ## 6      554            558          354                358
 
 **3) Look at the number of cancelled flights per day. Is there a
 pattern? Is the proportion of cancelled flights related to the average
