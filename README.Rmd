@@ -1,0 +1,56 @@
+---
+title: "STAT433 - HW2"
+author: "Steven Xia"
+date: "2/10/2021"
+output: github_document
+---
+
+[My GitHub Repository Here](https://github.com/sxia35/433-Homework2.git)
+
+```{r include=FALSE}
+library(dplyr)
+```
+
+```{r}
+#install.packages("nycflights13")
+library(nycflights13)
+library(ggplot2)
+```
+
+**1) How many flights have a missing dep_time? What other variables are missing? What might these rows represent?**
+
+```{r echo=TRUE}
+colSums(is.na(flights))
+```
+
+There are 8255 flights that have a missing dep_time. The variables dep_delay, arr_time, arr_delay, tailnum, and air_time are all missing as well. We can see the number of missing flights for each of these variables. We can see that dep_time and dep_delay are missing the same amount of values, so it is safe to assume that there are 8255 flights that did not take off. Furthermore, for arr_time, arr_delay, and air_time, we can assume that those flights never took off, and never landed at any airport in NYC.
+
+
+
+**2) Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they're not really continuous numbers. Convert them to a more convenient representation of number of minutes since midnight.**
+
+```{r echo=TRUE}
+flights = mutate(flights, new_dep_time = (dep_time %/% 100)*60 + (dep_time %% 100))
+flightTimes <- select(flights, dep_time, sched_dep_time, new_dep_time)
+head(flightTimes)
+```
+
+
+
+**3) Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay? Use multiple dplyr operations, all on one line, concluding with `ggplot(aes(x= ,y=)) + geom_point()'** 
+
+From the plots below, we are able to see that there is indeed a direct relationship between the proportion of cancelled flights and the average delay. We can see that when the average delay was at its highest point around the 8th day, the proportion of cancelled flights was also at its highest. We can also see that the shape of both scatterplots appear to be quite similar, both plots having two distinct, matching peaks on the 8th and 24th days.
+
+```{r}
+flights %>% group_by(day) %>%
+  summarise(
+    delay = mean(dep_delay, na.rm = TRUE)) %>%
+  ggplot(aes(x = day, y = delay)) + geom_point()
+```
+
+```{r}
+flights %>% group_by(day) %>%
+  summarise(
+    cancelled = sum(is.na(dep_time))) %>%
+  ggplot(aes(x = day, y = cancelled)) + geom_point()
+```
